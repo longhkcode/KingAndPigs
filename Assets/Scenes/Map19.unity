@@ -296,6 +296,10 @@ PrefabInstance:
       value: GameManager
       objectReference: {fileID: 0}
     - target: {fileID: 5935514131506463974, guid: fd6badbd036ce1348993e42e9d39bf23, type: 3}
+      propertyPath: loseUI
+      value: 
+      objectReference: {fileID: 8279257026167045105}
+    - target: {fileID: 5935514131506463974, guid: fd6badbd036ce1348993e42e9d39bf23, type: 3}
       propertyPath: pauseUI
       value: 
       objectReference: {fileID: 8279257026167045104}
@@ -37931,6 +37935,11 @@ PrefabInstance:
 --- !u!1 &8279257026167045104 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1249814381918271743, guid: 66c38f5f8bfb40e4f986199052f92e4b, type: 3}
+  m_PrefabInstance: {fileID: 8279257026167045103}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &8279257026167045105 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6105777491416345159, guid: 66c38f5f8bfb40e4f986199052f92e4b, type: 3}
   m_PrefabInstance: {fileID: 8279257026167045103}
   m_PrefabAsset: {fileID: 0}
 --- !u!114 &8279257026167045106 stripped

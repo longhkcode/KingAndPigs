@@ -143,4 +143,11 @@ public class PigNormal : EnemyController
             sr.flipX = directionX > 0;
         }
     }
+    // Hàm này CHỈ được gọi cho quái do Boss triệu hồi
+    public void ForceChase()
+    {
+        currentState = EnemyState.Chase;
+        chaseRange = 999f;       // Tăng tầm phát hiện
+        losePlayerRange = 999f;  // Không quay lại Patrol
+    }
 }

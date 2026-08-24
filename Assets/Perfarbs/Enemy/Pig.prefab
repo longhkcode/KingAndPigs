@@ -204,7 +204,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: '::'
   moveSpeed: 3
-  maxHP: 50
+  maxHP: 40
   currentHP: 0
   damage: 5
   currentState: 0

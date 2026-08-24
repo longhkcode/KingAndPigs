@@ -61,15 +61,15 @@ public class DoorController : MonoBehaviour
     {
         isTransitioning = true;
 
-        // 1. Tự động lấy số level từ tên Scene hiện tại (VD: "Map1" -> 1, "Map2" -> 2)
+        // 1. Tự động lấy số level từ tên Scene hiện tại (VD: "Map1" -> 1)
         int currentLevelIndex = GetCurrentLevelIndex();
 
-        // 2. Mở khóa Level tiếp theo vào PlayerPrefs
-        int currentUnlocked = PlayerPrefs.GetInt("UnlockedLevel", 1);
-        if (currentLevelIndex >= currentUnlocked)
+        // 2. Mở khóa Level tiếp theo bằng SaveSystem (Lưu File JSON)
+        SaveData data = SaveSystem.LoadGame();
+        if (currentLevelIndex >= data.unlockedLevel)
         {
-            PlayerPrefs.SetInt("UnlockedLevel", currentLevelIndex + 1);
-            PlayerPrefs.Save();
+            data.unlockedLevel = currentLevelIndex + 1;
+            SaveSystem.SaveGame(data);
         }
 
         // 3. Chuyển Player về tâm cửa, tắt vật lý và chạy Animation Player_DoorIn
@@ -88,22 +88,26 @@ public class DoorController : MonoBehaviour
         yield return new WaitForSeconds(0.5f);
 
         // 5. Load về Scene chọn level
-        SceneManager.LoadScene("Levels_CR1");
+        if (SceneManager.GetActiveScene().name == "Map25")
+        {
+            SceneManager.LoadScene("WinGame");
+        }
+        else
+        {
+            SceneManager.LoadScene("Levels_CR1");
+        }
     }
 
-    /// <summary>
-    /// Lấy chỉ số Level tự động từ tên của Scene hiện tại
-    /// </summary>
     private int GetCurrentLevelIndex()
     {
-        string sceneName = SceneManager.GetActiveScene().name; // Ví dụ lấy được "Map1" hoặc "Map12"
-        string numbersOnly = Regex.Replace(sceneName, @"[^\d]", ""); // Lọc bỏ chữ, chỉ giữ lại số
+        string sceneName = SceneManager.GetActiveScene().name;
+        string numbersOnly = Regex.Replace(sceneName, @"[^\d]", "");
 
         if (int.TryParse(numbersOnly, out int levelIndex))
         {
             return levelIndex;
         }
 
-        return 1; // Mặc định trả về 1 nếu tên Scene không chứa số
+        return 1;
     }
 }

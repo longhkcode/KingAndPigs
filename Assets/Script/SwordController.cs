@@ -20,7 +20,7 @@ public class SwordController : MonoBehaviour
         if (hitObjects.Contains(collision)) return;
 
         // 1. Chém Enemy
-        if (collision.CompareTag("Enemy"))
+        if (collision.CompareTag("Enemy") || collision.CompareTag("BossEnemy"))
         {
             var enemy = collision.GetComponent<EnemyController>();
             if (enemy != null)

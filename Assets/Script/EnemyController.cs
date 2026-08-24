@@ -45,10 +45,17 @@ public class EnemyController : MonoBehaviour
 
     public virtual void Die()
     {
+        // Báo cho GameManager cũ (nếu ở các Map thường)
         if (GameManager.Instance != null)
         {
             GameManager.Instance.EnemyKilled();
         }
+        // Báo cho GameManagerMap25 (nếu ở Map 25)
+        else if (GameManagerMap25.Instance != null)
+        {
+            GameManagerMap25.Instance.EnemyKilled();
+        }
+
         Destroy(gameObject);
     }
 }

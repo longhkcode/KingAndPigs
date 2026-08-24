@@ -176,7 +176,7 @@ public class King_Pig : EnemyController
         }
     }
     
-    // Skill 1: Bắn Bom
+// Skill 1: Bắn Bom
     private IEnumerator BanBombWithWarning()
     {
         LineRenderer warningLine = null;
@@ -184,7 +184,7 @@ public class King_Pig : EnemyController
         {
             warningLine = Instantiate(lineRendererPrefab, firePos.position, Quaternion.identity);
         }
-        
+    
         Vector3 targetDirection = Vector3.zero;
         float timer = 0f;
 
@@ -204,12 +204,20 @@ public class King_Pig : EnemyController
             }
             yield return null;
         }
-        
+    
         if (warningLine != null) Destroy(warningLine.gameObject);
 
         if (bombPrefab != null)
         {
             GameObject bomb = Instantiate(bombPrefab, firePos.position, Quaternion.identity);
+
+            // Bỏ qua va chạm giữa Boss và Quả Bom
+            Collider2D bossCollider = GetComponentInChildren<Collider2D>();
+            Collider2D bombCollider = bomb.GetComponentInChildren<Collider2D>();
+            if (bossCollider != null && bombCollider != null)
+            {
+                Physics2D.IgnoreCollision(bossCollider, bombCollider);
+            }
 
             BoomController boomCtrl = bomb.GetComponent<BoomController>();
             if (boomCtrl != null)
@@ -217,23 +225,15 @@ public class King_Pig : EnemyController
                 boomCtrl.ActivateCanonBoom();
             }
 
-            Collider2D bombCollider = bomb.GetComponent<Collider2D>();
-            Collider2D bossCollider = GetComponent<Collider2D>();
-            if (bombCollider != null && bossCollider != null)
-            {
-                Physics2D.IgnoreCollision(bombCollider, bossCollider);
-            }
-
             Rigidbody2D rb = bomb.GetComponent<Rigidbody2D>();
             if (rb != null)
             {
-                // Dùng .linearVelocity nếu là Unity 6, hoặc fallback dùng .velocity cho các bản cũ hơn
-                rb.linearVelocity = targetDirection * fireSpeed;
+                rb.linearVelocity = targetDirection * (fireSpeed * 1.5f); // Bắn thẳng theo hướng Player
             }
             if (anim != null) anim.SetTrigger("Attack");
         }
     }
-
+    
     // Skill 2: Bắn Thùng Gỗ Xung Quanh    
     private IEnumerator BanThungGoWithWarning()
     {
@@ -277,25 +277,26 @@ public class King_Pig : EnemyController
 
         if (boxPrefab != null)
         {
-            Collider2D bossCollider = GetComponent<Collider2D>();
+            Collider2D bossCollider = GetComponentInChildren<Collider2D>();
 
             for (int i = 0; i < boxCount; i++)
             {
                 float angle = i * angleStep;
-                Vector3 dir = new Vector3(Mathf.Cos(angle * Mathf.Deg2Rad), Mathf.Sin(angle * Mathf.Deg2Rad), 0);
+                Vector2 dir = new Vector2(Mathf.Cos(angle * Mathf.Deg2Rad), Mathf.Sin(angle * Mathf.Deg2Rad)).normalized;
 
                 GameObject box = Instantiate(boxPrefab, firePos.position, Quaternion.identity);
 
-                Collider2D boxCollider = box.GetComponent<Collider2D>();
-                if (boxCollider != null && bossCollider != null)
+                // Bỏ qua va chạm giữa Boss và Thùng Gỗ
+                Collider2D boxCollider = box.GetComponentInChildren<Collider2D>();
+                if (bossCollider != null && boxCollider != null)
                 {
-                    Physics2D.IgnoreCollision(boxCollider, bossCollider);
+                    Physics2D.IgnoreCollision(bossCollider, boxCollider);
                 }
 
                 Rigidbody2D rb = box.GetComponent<Rigidbody2D>();
                 if (rb != null)
                 {
-                    rb.linearVelocity = dir * fireSpeed;
+                    rb.linearVelocity = dir * fireSpeed; // Gán vận tốc trực tiếp giúp thùng bay ra lập tức
                 }
                 Destroy(box, 4f);
             }
@@ -316,8 +317,24 @@ public class King_Pig : EnemyController
     private void CreatEnemy()
     {
         if (basicEnemyPrefab == null) return;
+
         Vector3 spawnOffset = new Vector3(Random.Range(-1.5f, 1.5f), Random.Range(-1.5f, 1.5f), 0f); 
-        Instantiate(basicEnemyPrefab, transform.position + spawnOffset, Quaternion.identity);
+        GameObject newEnemy = Instantiate(basicEnemyPrefab, transform.position + spawnOffset, Quaternion.identity);
+
+        // Bỏ qua va chạm giữa Boss và Quái mới sinh
+        Collider2D bossCollider = GetComponentInChildren<Collider2D>();
+        Collider2D enemyCollider = newEnemy.GetComponentInChildren<Collider2D>();
+        if (bossCollider != null && enemyCollider != null)
+        {
+            Physics2D.IgnoreCollision(bossCollider, enemyCollider);
+        }
+
+        // CHỈ ép con quái mới tạo này lao vào đuổi Player ngay lập tức
+        PigNormal pigScript = newEnemy.GetComponent<PigNormal>();
+        if (pigScript != null)
+        {
+            pigScript.ForceChase();
+        }
     }
 
     // Skill 5: Dịch chuyển tức thời
@@ -327,4 +344,15 @@ public class King_Pig : EnemyController
         Vector3 offset = new Vector3(-1f, 0f, 0f); 
         transform.position = player.transform.position + offset;
     }
+    public override void Die()
+    {
+        // Báo cho GameManagerMap25 biết Boss đã bị tiêu diệt
+        if (GameManagerMap25.Instance != null)
+        {
+            GameManagerMap25.Instance.BossKilled();
+        }
+
+        Destroy(gameObject);
+    }
+    
 }

@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class Menu : MonoBehaviour
 {
@@ -45,5 +46,9 @@ public class Menu : MonoBehaviour
     {
         if(settingPanel != null) settingPanel.SetActive(true);
     }
-    
+
+    public void OpenLevel()
+    {
+        SceneManager.LoadScene("Levels_CR1");
+    }
 }
