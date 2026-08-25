@@ -51,4 +51,10 @@ public class Menu : MonoBehaviour
     {
         SceneManager.LoadScene("Levels_CR1");
     }
+
+    public void ExitGame()
+    {
+        Debug.Log("Exit");
+        Application.Quit();
+    }
 }
