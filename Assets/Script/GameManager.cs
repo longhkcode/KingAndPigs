@@ -158,11 +158,15 @@ public class GameManager : MonoBehaviour
     // --- XỬ LÝ PAUSE ---
     public void PauseGame()
     {
-        Time.timeScale = 0f;
+        Time.timeScale = 0f; // Dừng thời gian trong game
 
         if (pauseUI != null)
         {
-            pauseUI.SetActive(true);
+            pauseUI.SetActive(true); // Bật Panel GamePause
+        }
+        else
+        {
+            Debug.LogError("GameManager: Chưa kéo GamePause (1) vào ô Pause UI!");
         }
     }
 

@@ -319,6 +319,9 @@ public class PlayerController : MonoBehaviour
         if (GameManager.Instance != null)
         {
             GameManager.Instance.GameOver();
+        }else if (GameManagerMap25.Instance != null)
+        {
+            GameManagerMap25.Instance.GameOver();
         }
 
         this.enabled = false;
@@ -332,7 +335,14 @@ public class PlayerController : MonoBehaviour
 
         if (other.CompareTag("Dimond"))
         {
-            GameManager.Instance.AddScore(1);
+            if (GameManager.Instance != null)
+            {
+                GameManager.Instance.AddScore(1);
+            }
+            else if (GameManagerMap25.Instance != null)
+            {
+                GameManagerMap25.Instance.AddScore(1);
+            }
 
             if (AudioManager.Instance != null)
             {
